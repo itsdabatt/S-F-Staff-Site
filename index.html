@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#153b42">
+<title>Smithers & Friends | Volunteer & Staff Hub</title>
+<style>
+:root{font-family:system-ui,-apple-system,Segoe UI,sans-serif;color:#183439;background:#f5f8f6}*{box-sizing:border-box}
+body{margin:0}header{background:#153b42;color:#fff;padding:22px max(18px,calc((100% - 1050px)/2))}
+header h1{margin:0;font-size:1.75rem}header p{margin:6px 0 0;color:#d0e6dd}
+nav{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}button,.button{cursor:pointer;border:0;border-radius:9px;padding:10px 16px;font:inherit;font-weight:650;background:#e2ede8;color:#17383e}
+button.primary,.button.primary{background:#f1b949;color:#1f3030}button:disabled{opacity:.5;cursor:not-allowed}
+nav button.active{background:#f1b949;color:#182f34}main{max-width:1050px;margin:auto;padding:22px 16px 70px}
+h2{margin:0 0 10px}h3{margin:0 0 10px}.muted{color:#5d7172}.panel{background:white;border:1px solid #dbe5e0;border-radius:15px;padding:20px;margin-bottom:16px;box-shadow:0 3px 12px #163e3b0b}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}.stack>*+*{margin-top:12px}
+label{display:block;font-size:.9rem;font-weight:650;margin:10px 0 4px}input,textarea,select{width:100%;font:inherit;padding:10px 12px;border-radius:8px;border:1px solid #b6cbc3;background:white;color:#16393e}
+textarea{min-height:85px;resize:vertical}form button{margin-top:12px}.tag{display:inline-block;border-radius:30px;background:#e0efe7;padding:4px 10px;font-size:.78rem;margin-bottom:8px}
+.help{background:#fff7df;border-left:4px solid #dfad37;padding:14px;border-radius:8px}.good{background:#e6f6eb;border-left:4px solid #2d8a60;padding:14px;border-radius:8px}
+.hidden{display:none!important}section[hidden]{display:none}small{color:#647a78}table{width:100%;border-collapse:collapse}th,td{padding:10px;border-bottom:1px solid #deebe4;text-align:left;vertical-align:top}th{font-size:.82rem}
+.tablewrap{overflow:auto}footer{text-align:center;padding:26px;color:#5b6c6b}.danger{background:#fae3df;color:#83342d}
+@media(max-width:600px){header h1{font-size:1.35rem}.panel{padding:15px}button{width:auto}}
+</style>
+</head>
+<body>
+<header><h1>Smithers & Friends</h1><p>Community Events • Volunteer Opportunities • Staff Command Center</p>
+<nav><button class="active" data-tab="volunteer">Volunteer opportunities</button><button data-tab="staff">Staff sign in</button></nav></header>
+<main>
+<div id="notice" class="help hidden" role="status"></div>
+<section id="volunteer"><div class="panel"><h2>Make a difference in the Valley!</h2><p class="muted">Choose an event and a volunteer role. You'll see the full job details before signing up. No volunteer account required.</p></div><div id="eventList" class="grid"></div></section>
+<section id="staff" hidden>
+ <div id="loginCard" class="panel"><h2>Authorized staff only</h2><p class="muted">Staff accounts are created separately and require an approved role. Volunteer signups never require an account.</p>
+ <form id="loginForm"><label>Email<input type="email" name="email" required autocomplete="username"></label><label>Password<input type="password" name="password" required autocomplete="current-password"></label><button class="primary">Sign in securely</button></form></div>
+ <div id="dashboard" class="hidden">
+ <div class="panel"><div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap"><div><h2>Staff Command Center</h2><p id="staffIdentity" class="muted"></p></div><button id="signOut">Sign out</button></div>
+ <nav><button data-admin="overview" class="active">Events & roles</button><button data-admin="signups">Volunteer signups</button><button data-admin="tracking">Event tracking</button></nav></div>
+ <div id="adminOverview">
+ <div class="grid"><div class="panel"><h3>Create an event</h3><form id="eventForm">
+ <label>Event name<input name="name" required placeholder="Wiggle Days — ..."></label><label>Date<input name="event_date" type="date" required></label>
+ <label>Start time<input name="start_time" type="time"></label><label>End time<input name="end_time" type="time"></label>
+ <label>Location<input name="location" required></label><label>Event description<textarea name="description" placeholder="What families and volunteers need to know"></textarea></label>
+ <button class="primary">Create event</button></form></div>
+ <div class="panel"><h3>Add a volunteer role / station</h3><form id="roleForm"><label>Event<select id="roleEvent" name="event_id" required></select></label>
+ <label>Role or station<input name="title" required placeholder="MOVE Station Lead"></label><label>Spaces available<input name="capacity" type="number" min="1" max="1000" value="1" required></label>
+ <label>Arrival / shift time<input name="shift_time" placeholder="12:00 PM–3:30 PM"></label>
+ <label>What this person does<textarea name="instructions" required placeholder="Clear simple instructions, supplies, who to report to"></textarea></label>
+ <button class="primary">Add role</button></form></div></div>
+ <div id="adminEvents"></div></div>
+ <div id="adminSignups" hidden><div class="panel"><h3>Volunteer signup records</h3><p class="muted">Private. Only approved staff can read this information.</p><div id="signupList" class="tablewrap"></div></div></div>
+ <div id="adminTracking" hidden><div class="grid"><div class="panel"><h3>Log event activity</h3><form id="logForm"><label>Event<select id="logEvent" name="event_id" required></select></label>
+ <label>Record type<select name="kind"><option value="note">Prep / event note</option><option value="supply">Supply / inventory</option><option value="expense">Expense</option><option value="attendance">Attendance</option><option value="station">Station report</option><option value="followup">Follow-up</option><option value="outcome">Outcome / grant reporting</option></select></label>
+ <label>Title<input name="title" required></label><label>Details<textarea name="details" required></textarea></label><label>Amount or count (optional)<input name="number_value" type="number" step="0.01"></label><button class="primary">Save record</button></form></div>
+ <div class="panel"><h3>Event records & reports</h3><label>Choose event<select id="filterEvent"></select></label><div style="margin:12px 0"><button id="exportCsv">Download CSV report</button></div><div id="logList"></div></div></div></div>
+ </div>
+</section>
+</main><footer>Smithers & Friends Community Group, Inc. • Serving our communities together</footer>
+<script type="module">
+import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+import { SUPABASE_URL, SUPABASE_ANON_KEY } from "./config.js";
+const configured=SUPABASE_URL.startsWith("https://")&&SUPABASE_ANON_KEY.length>25;
+const db=configured?createClient(SUPABASE_URL,SUPABASE_ANON_KEY):null;
+const $=id=>document.getElementById(id);
+const escapeHtml=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const date=s=>s?new Date(s+"T12:00:00").toLocaleDateString(undefined,{year:"numeric",month:"short",day:"numeric"}):"";
+const notify=(msg,good=false)=>{const el=$("notice");el.textContent=msg;el.className=(good?"good":"help");el.scrollIntoView({behavior:"smooth",block:"nearest"});};
+let events=[],roles=[],records=[],signups=[],staff=null;
+const errorMsg=e=>e?.message||"Something went wrong.";
+function switchTab(tab){document.querySelectorAll("[data-tab]").forEach(b=>b.classList.toggle("active",b.dataset.tab===tab));$("volunteer").hidden=tab!=="volunteer";$("staff").hidden=tab!=="staff";}
+document.querySelectorAll("[data-tab]").forEach(b=>b.addEventListener("click",()=>switchTab(b.dataset.tab)));
+document.querySelectorAll("[data-admin]").forEach(b=>b.addEventListener("click",()=>{document.querySelectorAll("[data-admin]").forEach(n=>n.classList.toggle("active",n===b));["overview","signups","tracking"].forEach(t=>$(t==="overview"?"adminOverview":t==="signups"?"adminSignups":"adminTracking").hidden=t!==b.dataset.admin);}));
+async function loadPublic(){if(!db){$("eventList").innerHTML='<div class="panel"><h3>Setup required</h3><p>This starter website is installed, but the database is not yet connected. Follow README.md to enable real events and volunteer signups.</p></div>';return;}
+ const [ev,ro]=await Promise.all([db.from("events").select("*").eq("published",true).order("event_date"),db.from("roles").select("*").order("title")]);
+ if(ev.error||ro.error){notify(errorMsg(ev.error||ro.error));return;}events=ev.data||[];roles=ro.data||[];renderPublic();}
+function renderPublic(){const future=events.filter(e=>e.event_date>=new Date().toLocaleDateString("en-CA"));
+ $("eventList").innerHTML=future.length?future.map(e=>'<article class="panel"><span class="tag">'+escapeHtml(date(e.event_date))+'</span><h3>'+escapeHtml(e.name)+'</h3><p>'+escapeHtml(e.location)+' • '+escapeHtml([e.start_time,e.end_time].filter(Boolean).join("–"))+'</p><p class="muted">'+escapeHtml(e.description)+'</p>'+roles.filter(r=>r.event_id===e.id).map(r=>'<div class="panel"><h3>'+escapeHtml(r.title)+'</h3><p><strong>Shift:</strong> '+escapeHtml(r.shift_time||"Ask event lead")+' | <strong>Openings:</strong> up to '+escapeHtml(r.capacity)+'</p><p>'+escapeHtml(r.instructions)+'</p><form class="signup" data-role="'+escapeHtml(r.id)+'"><label>Your name<input name="full_name" required maxlength="100"></label><label>Email<input type="email" name="email" required></label><label>Phone (optional)<input name="phone" type="tel" maxlength="40"></label><button class="primary">Claim this volunteer job</button></form></div>').join("")+'</article>').join(""):'<div class="panel"><h3>No upcoming events are posted yet.</h3><p>Please check back for upcoming volunteer opportunities.</p></div>';
+ document.querySelectorAll("form.signup").forEach(f=>f.addEventListener("submit",async ev=>{ev.preventDefault();const btn=f.querySelector("button");btn.disabled=true;const data=Object.fromEntries(new FormData(f));const {error}=await db.from("signups").insert({role_id:f.dataset.role,full_name:data.full_name.trim(),email:data.email.trim(),phone:data.phone.trim()||null});btn.disabled=false;if(error){notify(errorMsg(error));return;}f.reset();notify("You're signed up! Please save the event and shift details above. Thank you for volunteering.",true);}));
+}
+async function verifyStaff(session){staff=null;if(!session){$("loginCard").classList.remove("hidden");$("dashboard").classList.add("hidden");return;}
+ const {data,error}=await db.from("staff_members").select("display_name,role").eq("user_id",session.user.id).maybeSingle();
+ if(error||!data){notify("This account is not approved for staff access.");await db.auth.signOut();return;}
+ staff=data;$("staffIdentity").textContent=data.display_name+" • "+data.role;
+ $("loginCard").classList.add("hidden");$("dashboard").classList.remove("hidden");await refreshStaff();}
+$("loginForm").addEventListener("submit",async e=>{e.preventDefault();if(!db){notify("Database setup is required before sign-in.");return;}const f=Object.fromEntries(new FormData(e.target));const {data,error}=await db.auth.signInWithPassword({email:f.email,password:f.password});if(error){notify(errorMsg(error));return;}await verifyStaff(data.session);notify("Signed in successfully.",true);});
+$("signOut").addEventListener("click",async()=>{await db.auth.signOut();await verifyStaff(null);notify("Signed out.",true);});
+async function refreshStaff(){if(!staff)return;
+ const [ev,ro,si,lo]=await Promise.all([db.from("events").select("*").order("event_date",{ascending:false}),db.from("roles").select("*").order("title"),db.from("signups").select("*,roles(title,event_id)").order("created_at",{ascending:false}),db.from("event_logs").select("*").order("created_at",{ascending:false})]);
+ for(const r of [ev,ro,si,lo])if(r.error){notify(errorMsg(r.error));return;}
+ events=ev.data;roles=ro.data;signups=si.data;records=lo.data;
+ for(const id of ["roleEvent","logEvent","filterEvent"]){$(id).innerHTML=(id==="filterEvent"?'<option value="">All events</option>':"")+events.map(e=>'<option value="'+escapeHtml(e.id)+'">'+escapeHtml(e.name)+" ("+escapeHtml(date(e.event_date))+")</option>").join("");}
+ $("adminEvents").innerHTML=events.map(e=>'<div class="panel"><h3>'+escapeHtml(e.name)+' — '+escapeHtml(date(e.event_date))+'</h3><p>'+escapeHtml(e.location)+'</p><p><small>'+escapeHtml(e.description||"No description")+'</small></p><p><strong>Roles:</strong> '+(roles.filter(r=>r.event_id===e.id).map(r=>escapeHtml(r.title)+" ("+r.capacity+")").join(", ")||"None yet")+'</p><p><strong>Volunteer signups:</strong> '+signups.filter(s=>s.roles?.event_id===e.id).length+'</p><button class="eventPublish" data-id="'+escapeHtml(e.id)+'" data-value="'+(!e.published)+'">'+(e.published?"Unpublish event":"Publish event")+'</button></div>').join("")||'<div class="panel">Create your first event above.</div>';
+ document.querySelectorAll(".eventPublish").forEach(b=>b.addEventListener("click",async()=>{const {error}=await db.from("events").update({published:b.dataset.value==="true"}).eq("id",b.dataset.id);if(error)notify(errorMsg(error));else{await refreshStaff();await loadPublic();}}));
+ $("signupList").innerHTML='<table><thead><tr><th>Name</th><th>Email</th><th>Phone</th><th>Event / role</th><th>Signed up</th></tr></thead><tbody>'+signups.map(s=>'<tr><td>'+escapeHtml(s.full_name)+'</td><td>'+escapeHtml(s.email)+'</td><td>'+escapeHtml(s.phone)+'</td><td>'+escapeHtml(events.find(e=>e.id===s.roles?.event_id)?.name||"")+' / '+escapeHtml(s.roles?.title)+'</td><td>'+escapeHtml(new Date(s.created_at).toLocaleString())+'</td></tr>').join("")+'</tbody></table>';
+ renderLogs();}
+function renderLogs(){const filtered=records.filter(r=>!$("filterEvent").value||r.event_id===$("filterEvent").value);$("logList").innerHTML=filtered.map(r=>'<div class="panel"><span class="tag">'+escapeHtml(r.kind)+'</span><strong>'+escapeHtml(r.title)+'</strong><p>'+escapeHtml(r.details)+'</p><small>'+escapeHtml(events.find(e=>e.id===r.event_id)?.name||"")+' • '+escapeHtml(r.number_value??"")+' • '+escapeHtml(new Date(r.created_at).toLocaleString())+'</small></div>').join("")||'<p class="muted">No records yet.</p>';}
+$("filterEvent").addEventListener("change",renderLogs);
+async function insert(table,payload,form){if(!staff)return;const {error}=await db.from(table).insert(payload);if(error){notify(errorMsg(error));return;}form.reset();notify("Saved successfully.",true);await refreshStaff();await loadPublic();}
+$("eventForm").addEventListener("submit",e=>{e.preventDefault();const f=Object.fromEntries(new FormData(e.target));insert("events",{name:f.name,event_date:f.event_date,start_time:f.start_time||null,end_time:f.end_time||null,location:f.location,description:f.description,published:false},e.target);});
+$("roleForm").addEventListener("submit",e=>{e.preventDefault();const f=Object.fromEntries(new FormData(e.target));insert("roles",{event_id:f.event_id,title:f.title,capacity:Number(f.capacity),shift_time:f.shift_time,instructions:f.instructions},e.target);});
+$("logForm").addEventListener("submit",e=>{e.preventDefault();const f=Object.fromEntries(new FormData(e.target));insert("event_logs",{event_id:f.event_id,kind:f.kind,title:f.title,details:f.details,number_value:f.number_value===""?null:Number(f.number_value)},e.target);});
+$("exportCsv").addEventListener("click",()=>{const rows=records.filter(r=>!$("filterEvent").value||r.event_id===$("filterEvent").value).map(r=>({event:events.find(e=>e.id===r.event_id)?.name||"",type:r.kind,title:r.title,details:r.details,value:r.number_value??"",created_at:r.created_at}));const keys=["event","type","title","details","value","created_at"];const csv=[keys.join(","),...rows.map(r=>keys.map(k=>'"'+String(r[k]).replaceAll('"','""')+'"').join(","))].join("\r\n");const url=URL.createObjectURL(new Blob([csv],{type:"text/csv"}));const a=document.createElement("a");a.href=url;a.download="snf-event-records.csv";a.click();URL.revokeObjectURL(url);});
+await loadPublic();if(db){const {data}=await db.auth.getSession();if(data.session)await verifyStaff(data.session);}
+</script>
+</body></html>
