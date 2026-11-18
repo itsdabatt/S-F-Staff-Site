@@ -41,3 +41,8 @@ On GitHub, open a file and click the pencil icon to edit it, then commit. `index
 - Back up records from Supabase periodically. CSV exports are available for event logs.
 
 Questions about the organization: https://smithersandfriends.org
+
+
+## Family texting center (new module)
+
+A staff-only Wiggle Days Family Texting Center was added at `/family-texting/`. It includes family contacts, recorded SMS permission, select-all/uncheck announcement tools, private reply threads and message history. The sender and webhook code are stored in `supabase/functions/` for later activation with a separate approved S&F texting number. **Live SMS is not active yet.** The main `config.js` still needs a real Supabase project, the `family-texting/database.sql` migration must be run, and the SMS gateway must be registered and tested. See [the module setup guide](family-texting/README.md). Never commit real parent contact information or provider credentials to the public repository.
